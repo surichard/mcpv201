@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+
+  mysql:
+    image: mysql:5.7
+    container_name: app_mysql
+    volumes:
+      - ../mysql/my.cnf:/etc/mysql/my.cnf:ro
+      - ../mysql/data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: P@sswd123890
+    ports:
+      - 3306:3306
+    networks:
+      - appnet
+   
+  webapp:
+    build: ../app
+    container_name: app_web
+    depends_on:
+      - mysql
+      - redis
+    ports:
+      - "8080:8080"
+    networks:
+      - appnet
+    volumes:
+      - /logs:/logs # 创建容器数据卷
+
+networks:
+  appnet:
+    driver: bridge
